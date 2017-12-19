@@ -1,0 +1,42 @@
+---
+- hosts: all
+  vars:
+    color: YELLOW
+
+  tasks:
+  - name: Ensure Webserver installed
+    yum:
+      state: present
+      name: httpd
+
+  - name: Open firewall port
+    firewalld:
+      service: http
+      permanent: true
+      state: enabled
+    register: fw
+
+  - name: Restart firewall
+    service:
+      name: firewalld
+      state: restarted
+      enabled: yes
+    when: fw.changed
+
+  - name: Start Webserver
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+  - name: Setup basic index.html
+    template:
+      backup: true
+      #src: usr/share/nginx/html/index.html.j2
+      #dest: /usr/share/nginx/html/index.html
+      src: var/www/html/index.html.j2
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
