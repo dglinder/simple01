@@ -1,7 +1,7 @@
 ---
 - hosts: all
   vars:
-    color: YELLOW
+    color: RED
 
   tasks:
   - name: Ensure Webserver installed
